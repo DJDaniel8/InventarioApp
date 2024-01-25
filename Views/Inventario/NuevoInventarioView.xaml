@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventarioApp.ViewModels"
+             x:Class="InventarioApp.Views.Inventario.NuevoInventarioView"
+             Title="NuevoInventarioView"
+             Style="{StaticResource ContentPageStyle}">
+
+    <ContentPage.BindingContext>
+        <vm:NuevoInventarioViewModel/>
+    </ContentPage.BindingContext>
+
+    <StackLayout>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" 
+                   Text="Producto:"
+                   VerticalOptions="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" 
+                   Text="Bodega:"
+                   VerticalOptions="Center"/>
+            <Label Grid.Row="2" Grid.Column="0" 
+                   Text="Cantidad:"
+                   VerticalOptions="Center"/>
+            
+            <Frame Grid.Row="0" Grid.Column="1" 
+                   Margin="5">
+                <Picker HorizontalOptions="Fill"
+                        ItemsSource="{Binding Productos}"
+                        SelectedItem="{Binding SelectedProducto}"
+                        ItemDisplayBinding="{Binding Nombre}"/>
+            </Frame>
+
+            <Frame Grid.Row="1" Grid.Column="1" 
+                   Margin="5">
+                <Picker HorizontalOptions="Fill"
+                        ItemsSource="{Binding Bodegas}"
+                        SelectedItem="{Binding SelectedBodega}"
+                        ItemDisplayBinding="{Binding Nombre}"/>
+            </Frame>
+            
+            <Entry Grid.Row="2" Grid.Column="1" 
+                   Margin="5"
+                   Text="{Binding Cantidad}"
+                   HorizontalOptions="StartAndExpand"
+                   MaximumWidthRequest="600"/>
+
+        </Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Row="3" Grid.Column="0" 
+                    Text="Crear" 
+                    Command="{Binding NewInventarioCommand}"
+                    BackgroundColor="{StaticResource AcceptGreen}"
+                    HorizontalOptions="Center"/>
+            <Button Grid.Row="3" Grid.Column="1" 
+                    Text="Cancelar" 
+                    Command="{Binding CancelNewInventarioCommad}"
+                    BackgroundColor="{StaticResource CancelRed}"
+                    HorizontalOptions="Center"/>
+        </Grid>
+    </StackLayout>
+</ContentPage>

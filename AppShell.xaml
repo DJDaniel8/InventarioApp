@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="InventarioApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:InventarioApp"
+    xmlns:views="clr-namespace:InventarioApp.Views.Inventario"
+    xmlns:views2="clr-namespace:InventarioApp.Views.Bodegas"
+    xmlns:views3="clr-namespace:InventarioApp.Views.Productos"
+    xmlns:vm="clr-namespace:InventarioApp.ViewModels"
+    xmlns:templates="clr-namespace:InventarioApp.Views.Templates"
+    Shell.FlyoutBehavior="Flyout"
+    Title="InventarioApp"
+    FlyoutBackground="#FFFFFF">
+
+    <Shell.FlyoutHeader>
+        <templates:FlyoutHeader />
+    </Shell.FlyoutHeader>
+
+    <Shell.FlyoutFooter>
+        <templates:FlyoutFooter/>
+    </Shell.FlyoutFooter>
+
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+
+        <ShellContent
+        Title="Inventario"
+        ContentTemplate="{DataTemplate views:InventarioView}"
+        Route="InventarioView">
+
+            <Shell.ItemTemplate>
+                <DataTemplate>
+                    <templates:FlyoutItem
+                        Icon="inventario.png"
+                        Title="Inventario"/>
+                </DataTemplate>
+            </Shell.ItemTemplate>
+        </ShellContent>
+    </FlyoutItem>
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+
+        <ShellContent Title="Bodegas"
+                      ContentTemplate="{DataTemplate views2:BodegasView}"
+                      Route="BodegaView"> 
+
+            <Shell.ItemTemplate>
+                <DataTemplate>
+                    <templates:FlyoutItem
+                    Icon="store.png"
+                    Title="Bodegas"/>
+                </DataTemplate>
+            </Shell.ItemTemplate>
+        </ShellContent>
+    </FlyoutItem>
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+
+        <ShellContent Title="Prodcutos"
+                  ContentTemplate="{DataTemplate views3:ProductosView}"
+                  Route="ProductosView">
+
+            <Shell.ItemTemplate>
+                <DataTemplate>
+                    <templates:FlyoutItem
+                Icon="product.png"
+                Title="Productos"/>
+                </DataTemplate>
+            </Shell.ItemTemplate>
+        </ShellContent>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Nuevo Inventario" FlyoutItemIsVisible="False">
+        <ShellContent Title="Nuevo Inventario"
+                      ContentTemplate="{DataTemplate views:NuevoInventarioView}"
+                      Route="NuevoInventarioView"
+                      FlyoutItemIsVisible="False"/>
+    </FlyoutItem>
+</Shell>

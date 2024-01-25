@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventarioApp.ViewModels"
+             xmlns:templates="clr-namespace:InventarioApp.Views.Templates"
+             x:Class="InventarioApp.Views.Inventario.InventarioView"
+             Title="Inventario"
+             Style="{StaticResource ContentPageStyle}">
+
+    <ContentPage.BindingContext>
+        <vm:InventarioViewModel/>
+    </ContentPage.BindingContext>
+
+    <StackLayout>
+
+        <StackLayout >
+            <Border BackgroundColor="White"
+                    Margin="10"
+                    Padding="0"
+                    HorizontalOptions="FillAndExpand">
+
+                <Entry Placeholder="Buscar"
+                       PlaceholderColor="Gray"
+                       FontSize="18"
+                       Text="{Binding ValorBusqueda}"/>
+            </Border>
+
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Text="Filtrar Por:"
+                       FontSize="18"
+                       VerticalOptions="Center"
+                       Grid.Column="0" />
+
+                <Frame Grid.Column="1">
+                    <Picker FontAttributes="Bold"
+                            ItemsSource="{Binding Bodegas}"
+                            SelectedItem="{Binding SelectedBodega}"
+                            ItemDisplayBinding="{Binding Nombre}"
+                            MinimumWidthRequest="100"/>
+                </Frame>
+
+                <ImageButton Source="delete.png"
+                             Margin="5,0,0,0"
+                             BackgroundColor="Transparent"
+                             WidthRequest="35"
+                             HeightRequest="35"
+                             Command="{Binding LimpiarClick}"
+                             Grid.Column="2" />  
+
+                <HorizontalStackLayout HorizontalOptions="EndAndExpand" Grid.Column="3">
+                    <Button Text="+"
+                            BackgroundColor="{StaticResource AcceptGreen}"
+                            
+                            FontSize="30"
+                            WidthRequest="40"
+                            FontAttributes="Bold"
+                            Padding="0"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Start"
+                            Margin="0,0,10,0"
+                            Command="{Binding NewInventarioCommand}"/>   
+                </HorizontalStackLayout>
+
+            </Grid>
+
+
+            <BoxView HeightRequest="1"/>
+        </StackLayout>
+
+        <CollectionView ItemsSource="{Binding ProductosBodegasFiltrado}" VerticalOptions="FillAndExpand">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                           Text="{Binding Producto.Nombre}"
+                           FontSize="18"/>
+                        <Label Grid.Row="1" Grid.Column="0"
+                           Text="{Binding Cantidad, StringFormat='Cantidad: {0:F0}'}"
+                           FontSize="18"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                           Text="{Binding Bodega.Nombre}"
+                           FontSize="18"/>
+
+                        <ImageButton Grid.Row="2" Grid.Column="0"
+                                 Source="edit.png"
+                                 Background="Transparent"
+                                 HorizontalOptions="Start"
+                                 WidthRequest="35" HeightRequest="35"
+                                 Margin="10,0,0,0"
+                                 Command="{Binding EditCommand}"
+                                 CommandParameter="{Binding .}"/>
+
+                        <ImageButton Grid.Row="2" Grid.Column="1"
+                                 Source="delete.png"
+                                 Background="Transparent"
+                                 HorizontalOptions="End"
+                                 WidthRequest="35" HeightRequest="35"
+                                 Margin="0,0,10,0"
+                                 Command="{Binding DeleteCommand}"
+                                 CommandParameter="{Binding Id}"/>
+
+
+                        <BoxView Grid.Row="3" Grid.ColumnSpan="2"
+                                 HeightRequest="1"/>
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </StackLayout>
+</ContentPage>
