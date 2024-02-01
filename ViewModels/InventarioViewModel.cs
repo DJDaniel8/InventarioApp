@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -17,7 +18,7 @@ namespace InventarioApp.ViewModels
         public ICommand DeleteCommand { get; }
         public ICommand EditCommand { get; }
         public ICommand NewInventarioCommand { get; }
-        private Timer searchTimer;
+        private Timer _timer;
 
         private ObservableCollection<Productos_Bodegas> _ProductosBodegas = Productos_BodegasDAO.Inventarios;
 
@@ -31,12 +32,7 @@ namespace InventarioApp.ViewModels
             ProductosBodegasFiltrado = _ProductosBodegas;
             LimpiarClick = new LimpiarButtonCommand(this);
             SetCommands();
-            searchTimer = new Timer(OnTimerElapsed);
-        }
-
-        private void OnTimerElapsed(object state)
-        {
-             FiltrarProductosBodegasAsync();
+            _timer = new Timer(OnTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         private ObservableCollection<Producto> _Productos;
@@ -75,9 +71,11 @@ namespace InventarioApp.ViewModels
             {
                 _ValorBusqueda = value;
                 OnPropertyChanged(nameof(ValorBusqueda));
-                searchTimer?.Change(500, Timeout.Infinite);
+                _timer?.Change(500, Timeout.Infinite);
             }
         }
+
+        
 
         private ObservableCollection<Productos_Bodegas> _ProductosBodegasFiltrado;
         public ObservableCollection<Productos_Bodegas> ProductosBodegasFiltrado
@@ -98,48 +96,84 @@ namespace InventarioApp.ViewModels
             {
                 _SelectedBodega = value;
                 OnPropertyChanged(nameof(SelectedBodega));
-                FiltrarProductosBodegasAsync();
+                FiltrarProductosBodegasAsync().ConfigureAwait(false);
             }
         }
 
-        public async Task FiltrarProductosBodegasAsync()
+        private void OnTimerElapsed(object state)
         {
+            FiltrarProductosBodegasAsync().ConfigureAwait(false);
+        }
+
+        public async Task FiltrarProductosBodegasAsync()
+        { 
             if (string.IsNullOrEmpty(ValorBusqueda))
             {
+                    
                 ProductosBodegasFiltrado = new ObservableCollection<Productos_Bodegas>(_ProductosBodegas);
             }
             else
             {
-                var filteredList = await Task.Run(() =>
+                    
+                ProductosBodegasFiltrado = await Task.Run(() =>
                 {
-                    return _ProductosBodegas
+                    return new ObservableCollection<Productos_Bodegas>(_ProductosBodegas
                         .Where(x => x.Producto.Nombre.ToLower().Contains(ValorBusqueda.ToLower()))
                         .OrderBy(x => x.Producto.Nombre)
-                        .ToList();
+                        .ToList());
                 }).ConfigureAwait(false);
-
-                // Actualizar la colección en el hilo de la interfaz de usuario
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    ProductosBodegasFiltrado = new ObservableCollection<Productos_Bodegas>(filteredList);
-                });
             }
 
             if (SelectedBodega != null)
             {
-                var filteredList = await Task.Run(() =>
+                    
+                ProductosBodegasFiltrado = await Task.Run(() =>
                 {
-                    return _ProductosBodegas
+                    return new ObservableCollection<Productos_Bodegas>(_ProductosBodegas
                         .Where(x => x.Bodega.Id == SelectedBodega.Id)
-                        .ToList();
+                        .ToList());
                 }).ConfigureAwait(false);
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    ProductosBodegasFiltrado = new ObservableCollection<Productos_Bodegas>(filteredList);
-                });
             }
         }
+
+        //public async Task FiltrarProductosBodegasAsync()
+        //{
+        //    if (string.IsNullOrEmpty(ValorBusqueda))
+        //    {
+        //        ProductosBodegasFiltrado = new ObservableCollection<Productos_Bodegas>(_ProductosBodegas);
+        //    }
+        //    else
+        //    {
+        //        var filteredList = await Task.Run(() =>
+        //        {
+        //            return _ProductosBodegas
+        //                .Where(x => x.Producto.Nombre.ToLower().Contains(ValorBusqueda.ToLower()))
+        //                .OrderBy(x => x.Producto.Nombre)
+        //                .ToList();
+        //        }).ConfigureAwait(false);
+
+        //        // Actualizar la colección en el hilo de la interfaz de usuario
+        //        MainThread.BeginInvokeOnMainThread(() =>
+        //        {
+        //            ProductosBodegasFiltrado = new ObservableCollection<Productos_Bodegas>(filteredList);
+        //        });
+        //    }
+
+        //    if (SelectedBodega != null)
+        //    {
+        //        var filteredList = await Task.Run(() =>
+        //        {
+        //            return _ProductosBodegas
+        //                .Where(x => x.Bodega.Id == SelectedBodega.Id)
+        //                .ToList();
+        //        }).ConfigureAwait(false);
+
+        //        MainThread.BeginInvokeOnMainThread(() =>
+        //        {
+        //            ProductosBodegasFiltrado = new ObservableCollection<Productos_Bodegas>(filteredList);
+        //        });
+        //    }
+        //}
 
         public async Task EliminarProductoBodega(Productos_Bodegas productoBodega)
         {
